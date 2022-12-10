@@ -1,0 +1,12 @@
+{
+	"Leg": {
+		1:["Hip Trust"],
+		2:["Front Squat","Dumbbell Deadlift"]
+	},
+	"Push": {
+		1:["Dumbbell Shoulder Press", "Incline Bench"]	
+	},
+	"Pull": {
+		1:["Pullup", "Single Hand Dumbbel Row"]
+	}
+}
