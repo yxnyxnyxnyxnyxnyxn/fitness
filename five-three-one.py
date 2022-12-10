@@ -1,14 +1,29 @@
-
+import os 
+from dotenv import load_dotenv, find_dotenv 
+load_dotenv(find_dotenv()) 
 
 import math
 import json 
+import requests
 
+
+#KEYS
+API_NINJAS_KEY = os.getenv('API_NINJAS_KEY')    
+print(API_NINJAS_KEY)
 #CONSTANTS
 DAYS = ["Leg", "Push", "Pull"] * 2 
 MAIN_WORKOUT = ["Squat", "Bench", "Light Deadlift", "Squat", "OHP", "Light Deadlift"]
 PERCENT = [75,85,95]
 LIGHT_PERCENT = 65
+NINJAS_GET_URL = "https://api.api-ninjas.com/v1/exercises?" 
 
+def get_call(api_url):
+	response = requests.get(api_url, headers={'X-Api-Key': API_NINJAS_KEY})
+	return response
+
+def get_execises_by_muscle(muscle):
+	by_muscle_url = f"{NINJAS_GET_URL}muscle={muscle}"
+	return get_call(by_muscle_url)
 
 def calcualte_weight():
 	pr = open('pr.json')
@@ -28,7 +43,8 @@ def calcualte_weight():
 
 
 def main():
-	calcualte_weight()
+	#calcualte_weight()
+	print(get_execises_by_muscle("glutes").json())
 	return 0 
 
 
