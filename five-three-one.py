@@ -8,29 +8,6 @@ import requests
 
 
 
-"""
-Highlevel Junk:
-Each day 
-1. one main workout 
-2. stable work
-3. random workouts
-
-stable workout 5 sets -> json 
-
-
-
-Goal: 
-Week1 
-
-Leg  Squat 
-Push Bench
-Pull LightDeadLift 
-Leg  Squat 
-Push OHP
-Pull DeadLift
-"""
-
-
 
 #KEYS
 API_NINJAS_KEY = os.getenv('API_NINJAS_KEY')    
@@ -46,6 +23,8 @@ STABLES = {
 	"Push": ["Bench","Incline Bench", "Dumbbell Shoulder Press", "Lateral Raise"],
 	"Pull": ["Single Hand Row", "Pull Up"]
 }
+pr = open('pr.json')
+pr = json.load(pr)
 
 def get_call(api_url):
 	response = requests.get(api_url, headers={'X-Api-Key': API_NINJAS_KEY})
@@ -61,27 +40,34 @@ def stable_workout(day,main):
 		return STABLES[day][1:]
 	return STABLES[day]
 
-def calcualte_weight():
-	pr = open('pr.json')
-	pr = json.load(pr)
+def calcualte_weight(main,p):
+	max_w = 0
+	if main in pr:
+		max_w = p*pr[main]/100.00
+	else:
+		max_w = LIGHT_PERCENT*pr[main.split(" ")[1]]/100.00
+	return math.ceil(max_w)
+
+def create_workout():
 	m = {}
 	for i,p in enumerate(PERCENT):
-		week = f"WEEK {i}"
+		week = f"WEEK {i+1}"
 		m[week] = {}
+		j = 0
 		for day,main in zip(DAYS,MAIN_WORKOUT):
-			max_w = 0
-			if main in pr:
-				max_w = p*pr[main]/100.00
-			else:
-				max_w = LIGHT_PERCENT*pr[main.split(" ")[1]]/100.00
-			m[week][day] = [f"{main}: {math.ceil(max_w)}"]
-			m[week][day] += stable_workout(day,main)
+			print(day,main)
+			j += 1 
+			weight = calcualte_weight(main,p)
+			d = f"{day} {str(j//4+1)}"
+			m[week][d] = [f"{main}: {weight}"]
+			m[week][d] += stable_workout(day,main)
 	return m 	
-
+	
+	
 
 def main():
-	print(calcualte_weight())
-	#print(get_execises_by_muscle("glutes").json())
+	workout = create_workout()
+	print(workout)
 	return 0 
 
 
